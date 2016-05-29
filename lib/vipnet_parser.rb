@@ -7,24 +7,66 @@ class VipnetParser
     res
   end
 
-  def self.id(string)
-    if string =~ /(.*)0x([0-9a-f]{1,8})-0x([0-9a-f]{1,8})(.*)/
-      interval_begin = Regexp.last_match(2).to_i(16)
-      interval_end = Regexp.last_match(3).to_i(16)
-      return [] if interval_end < interval_begin
-      vipnet_ids = Array.new
-      (interval_end - interval_begin + 1).times do |n|
-        vipnet_ids.push("0x#{(interval_begin + n).to_s(16).rjust(8, '0')}")
+  def self.id(args)
+    if args.class == String
+      string = args
+      array = Array.new
+    elsif args.class == Hash
+      string = args[:string]
+      array = args[:array]
+      threshold = args[:threshold]
+    end
+    array = [] unless array
+    regexps = {
+      /(.*)(0x[0-9a-f]{1,8}-0x[0-9a-f]{1,8})(.*)/m => method(:id_parse_variant1),
+      /(.*)([0-9A-F]{8})(.*)/m => method(:id_parse_variant2),
+      /(.*)0x([0-9a-f]{1,8})(.*)/m => method(:id_parse_variant3),
+    }
+    string_matches_anything = false
+    regexps.each do |regexp, callback|
+      if string =~ regexp && !string_matches_anything
+        string_matches_anything = true
+        array += callback.call({ string: Regexp.last_match(2), threshold: threshold })
+        if Regexp.last_match(1) != ""
+          array += VipnetParser::id({ string: Regexp.last_match(1), array: array, threshold: threshold })
+        end
+        if Regexp.last_match(3) != ""
+          array += VipnetParser::id({ string: Regexp.last_match(3), array: array, threshold: threshold })
+        end
       end
-      return vipnet_ids
     end
-    if string =~ /(.*)([0-9A-F]{8})(.*)/
-      return ["0x" + Regexp.last_match(2).downcase]
+    if string_matches_anything
+      return array.uniq.sort
+    else
+      return []
     end
-    if string =~ /(.*)0x([0-9a-f]{1,8})(.*)/
-      return ["0x" + Regexp.last_match(2).to_s.rjust(8, "0")]
+  end
+
+  def self.id_parse_variant1(args)
+    string = args[:string]
+    threshold = args[:threshold]
+    string =~ /0x([0-9a-f]{1,8})-0x([0-9a-f]{1,8})/
+    interval_begin = Regexp.last_match(1).to_i(16)
+    interval_end = Regexp.last_match(2).to_i(16)
+    return [] if interval_end < interval_begin
+    if threshold
+      return [] if interval_end - interval_begin + 1 > threshold
     end
-    false
+    array = Array.new
+    (interval_end - interval_begin + 1).times do |n|
+      array.push("0x#{(interval_begin + n).to_s(16).rjust(8, '0')}")
+    end
+    array
+  end
+
+  def self.id_parse_variant2(args)
+    string = args[:string]
+    ["0x" + string.downcase]
+  end
+
+  def self.id_parse_variant3(args)
+    string = args[:string]
+    ["0x" + string.rjust(8, "0")]
   end
 
   def self.network(id)
@@ -35,6 +77,8 @@ class VipnetParser
     end
     false
   end
+
+  private_class_method :id_parse_variant1, :id_parse_variant2, :id_parse_variant3
 end
 
 class Iplirconf < VipnetParser
