@@ -27,11 +27,10 @@ class VipnetParser
       if string =~ regexp && !string_matches_anything
         string_matches_anything = true
         array += callback.call({ string: Regexp.last_match(2), threshold: threshold })
-        if Regexp.last_match(1) != ""
-          array += VipnetParser::id({ string: Regexp.last_match(1), array: array, threshold: threshold })
-        end
-        if Regexp.last_match(3) != ""
-          array += VipnetParser::id({ string: Regexp.last_match(3), array: array, threshold: threshold })
+        [Regexp.last_match(1), Regexp.last_match(3)].each do |side_match|
+          unless side_match.empty?
+            array += VipnetParser::id({ string: side_match, array: array, threshold: threshold })
+          end
         end
       end
     end
