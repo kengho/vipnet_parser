@@ -6,8 +6,8 @@ RSpec.describe VipnetParser do
     content = file_fixture("iplirconf/initial_iplir.conf")
 
     it "should parse iplirconf" do
-      iplirconf = Iplirconf.new(content)
-      expected_iplirconf = Iplirconf.new
+      iplirconf = VipnetParser::Iplirconf.new(content)
+      expected_iplirconf = VipnetParser::Iplirconf.new
       expected_iplirconf.content = content
       expected_iplirconf.id = "0x1a0e000d"
       expected_iplirconf.sections = {
@@ -97,8 +97,8 @@ RSpec.describe VipnetParser do
     content = file_fixture("nodename/initial_nodename.doc")
 
     it "should parse nodename" do
-      nodename = Nodename.new(content)
-      expected_nodename = Nodename.new
+      nodename = VipnetParser::Nodename.new(content)
+      expected_nodename = VipnetParser::Nodename.new
       expected_nodename.content = content
       expected_nodename.records = {
         "1A0E000B" => {
