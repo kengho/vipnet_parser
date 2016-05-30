@@ -101,7 +101,7 @@ RSpec.describe VipnetParser do
       expected_nodename = VipnetParser::Nodename.new
       expected_nodename.content = content
       expected_nodename.records = {
-        "1A0E000B" => {
+        "0x1a0e000b" => {
           :name=>"administrator",
           :enabled=>true,
           :category=>:client,
@@ -109,7 +109,7 @@ RSpec.describe VipnetParser do
           :abonent_number=>"0001",
           :id=>"1A0E000B",
         },
-        "1A0E000C"  =>  {
+        "0x1a0e000c"  =>  {
           :name => "client1-renamed1",
           :enabled => false,
           :category => :client,
@@ -117,7 +117,7 @@ RSpec.describe VipnetParser do
           :abonent_number => "0001",
           :id => "1A0E000C",
         },
-        "1A0E000A" => {
+        "0x1a0e000a" => {
           :name => "coordinator1",
           :enabled => true,
           :category => :server,
@@ -125,7 +125,7 @@ RSpec.describe VipnetParser do
           :abonent_number => "0000",
           :id => "1A0E000A",
         },
-        "1A0E000D" => {
+        "0x1a0e000d" => {
           :name => "coordinator2",
           :enabled => true,
           :category => :server,
@@ -133,7 +133,7 @@ RSpec.describe VipnetParser do
           :abonent_number => "0000",
           :id => "1A0E000D",
         },
-        "1A0E0000" => {
+        "0x1a0e0000" => {
           :name => "Вся сеть",
           :enabled => true,
           :category => :group,

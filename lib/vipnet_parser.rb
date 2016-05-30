@@ -71,7 +71,7 @@ module VipnetParser
 
   module_function :id, :network
 
-  class VipnetParser
+  class VipnetConfig
     def ==(other)
       res = true
       @props.each do |prop|
@@ -81,7 +81,7 @@ module VipnetParser
     end
   end
 
-  class Iplirconf < VipnetParser
+  class Iplirconf < VipnetConfig
     PROPS = [:content, :id, :sections]
     attr_accessor *PROPS, :last_error
     private_constant :PROPS
@@ -144,7 +144,7 @@ module VipnetParser
     private :get_section_param
   end
 
-  class Nodename < VipnetParser
+  class Nodename < VipnetConfig
     PROPS = [:content, :records]
     attr_accessor *PROPS, :last_error
     private_constant :PROPS
@@ -167,7 +167,7 @@ module VipnetParser
         tmp_record[:name].rstrip!
         tmp_record[:enabled] = { "1" => true, "0" => false }[tmp_record[:enabled]]
         tmp_record[:category] = { "A" => :client, "S" => :server, "G" => :group }[tmp_record[:category]]
-        @records[tmp_record[:id]] = tmp_record
+        @records[VipnetParser::id(tmp_record[:id])[0]] = tmp_record
       end
       true
     end
