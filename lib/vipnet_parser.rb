@@ -91,7 +91,12 @@ module VipnetParser
       unless args.size == 1
         return false
       end
-      @content = args[0]
+      args = args[0]
+      if args.class == String
+        @content = args
+      elsif args.class == Hash
+        @content = args[:content]
+      end
       # remove comments
       content_nc = @content.gsub(/^#.*\n/, "")
       # remove ending
@@ -116,7 +121,7 @@ module VipnetParser
         }
         props.each do |type, props|
           props.each do |prop|
-            get_section_param({ prop: prop, section: tmp_section, content: section_content, type: type })
+            get_section_param({ prop: prop, section: tmp_section, content: section_content, type: type, opts: args })
           end
         end
         # self section id
@@ -127,6 +132,8 @@ module VipnetParser
     end
 
     def get_section_param(args)
+      opts = {} if args[:opts].class == String
+      opts = args[:opts] if args[:opts].class == Hash
       value_regexp = Regexp.new("^#{args[:prop].to_s}=\s(.*)$")
       if args[:type] == :multi
         tmp_array = Array.new
@@ -134,7 +141,10 @@ module VipnetParser
           value = line[value_regexp, 1]
           tmp_array.push(value) if value
         end
-        args[:section][args[:prop]] = tmp_array unless tmp_array.empty?
+        unless tmp_array.empty?
+          tmp_array = tmp_array.to_s if opts[:arrays_to_s]
+          args[:section][args[:prop]] = tmp_array
+        end
       elsif args[:type] == :single
         value = args[:content][value_regexp, 1]
         args[:section][args[:prop]] = value if value

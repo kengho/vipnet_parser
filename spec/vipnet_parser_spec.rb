@@ -90,6 +90,17 @@ RSpec.describe VipnetParser do
         },
       }
       expect(iplirconf).to eq(expected_iplirconf)
+      iplirconf_arrays_to_s = VipnetParser::Iplirconf.new({ content: content, arrays_to_s: true })
+      expected_iplirconf_arrays_to_s = VipnetParser::Iplirconf.new
+      expected_iplirconf_arrays_to_s.content = content
+      expected_iplirconf_arrays_to_s.id = "0x1a0e000d"
+      expected_iplirconf_arrays_to_s.sections = expected_iplirconf.sections
+      expected_iplirconf_arrays_to_s.sections.each do |id, section|
+        section.each do |prop_name, value|
+          expected_iplirconf_arrays_to_s.sections[id][prop_name] = value.to_s if value.class == Array
+        end
+      end
+      expect(iplirconf_arrays_to_s).to eq(expected_iplirconf_arrays_to_s)
     end
   end
 
