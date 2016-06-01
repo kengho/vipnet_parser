@@ -3,7 +3,7 @@ Gem::Specification.new do |s|
   s.version     = "0.3"
   s.date        = "2016-05-31"
   s.summary     = "ViPNet strings parser"
-  s.description = "Parses ViPNet strings like 'something 1A0EABCD something', iplir.conf and other files."
+  s.description = "Parses ViPNet IDs, iplir.conf and other files"
   s.authors     = ["Alexander Morozov"]
   s.email       = "ntcomp12@gmail.com"
   s.files       = ["lib/vipnet_parser.rb"]
