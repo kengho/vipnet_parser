@@ -158,6 +158,10 @@ RSpec.describe VipnetParser do
   end
 
   describe "vipnet id parser" do
+    it "should parse '1a0eabcd'" do
+      extracted_id = VipnetParser::id("1a0eabcd")
+      expect(extracted_id).to eq(["0x1a0eabcd"])
+    end
     it "should parse '1A0EABCD'" do
       extracted_id = VipnetParser::id("1A0EABCD")
       expect(extracted_id).to eq(["0x1a0eabcd"])

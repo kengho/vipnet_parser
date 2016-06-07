@@ -11,7 +11,7 @@ module VipnetParser
     array = [] unless array
     regexps = {
       /(.*)(0x[0-9a-f]{1,8}-0x[0-9a-f]{1,8})(.*)/m => method(:id_parse_variant1),
-      /(.*)([0-9A-F]{8})(.*)/m => method(:id_parse_variant2),
+      /(.*)([0-9A-Fa-f]{8})(.*)/m => method(:id_parse_variant2),
       /(.*)0x([0-9a-f]{1,8})(.*)/m => method(:id_parse_variant3),
     }
     string_matches_anything = false
