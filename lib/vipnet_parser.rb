@@ -8,10 +8,19 @@ module VipnetParser
       array = args[:array]
       threshold = args[:threshold]
     end
+    string = string.downcase
+    cyrillic_sub = {
+      "а" => "a", "б" => "b", "с" => "c", "д" => "d", "е" => "e", "ф" => "f",
+      "А" => "a", "Б" => "b", "С" => "c", "Д" => "d", "Е" => "e", "Ф" => "f",
+     }
+    cyrillic_sub.each do |cyr, lat|
+      string = string.gsub(cyr, lat)
+    end
+
     array = [] unless array
     regexps = {
       /(.*)(0x[0-9a-f]{1,8}-0x[0-9a-f]{1,8})(.*)/m => method(:id_parse_variant1),
-      /(.*)([0-9A-Fa-f]{8})(.*)/m => method(:id_parse_variant2),
+      /(.*)([0-9a-f]{8})(.*)/m => method(:id_parse_variant2),
       /(.*)0x([0-9a-f]{1,8})(.*)/m => method(:id_parse_variant3),
     }
     string_matches_anything = false

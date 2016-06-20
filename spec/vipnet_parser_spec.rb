@@ -217,6 +217,10 @@ RSpec.describe VipnetParser do
       extracted_id = VipnetParser::id({ string: "0x0000-0xffff", threshold: "0xffff".to_i(16) })
       expect(extracted_id).to eq([])
     end
+    it "should parse cyrillic ids" do
+      extracted_id = VipnetParser::id("1АБЕСДЕФ")
+      expect(extracted_id).to eq(["0x1abecdef"])
+    end
   end
 
   describe "network parser" do
