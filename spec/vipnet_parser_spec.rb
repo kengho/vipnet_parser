@@ -118,7 +118,6 @@ RSpec.describe VipnetParser do
           :category=>:client,
           :server_number=>"0001",
           :abonent_number=>"0001",
-          :id=>"1A0E000B",
         },
         "0x1a0e000c"  =>  {
           :name => "client1-renamed1",
@@ -126,7 +125,6 @@ RSpec.describe VipnetParser do
           :category => :client,
           :server_number => "0002",
           :abonent_number => "0001",
-          :id => "1A0E000C",
         },
         "0x1a0e000a" => {
           :name => "coordinator1",
@@ -134,7 +132,6 @@ RSpec.describe VipnetParser do
           :category => :server,
           :server_number => "0001",
           :abonent_number => "0000",
-          :id => "1A0E000A",
         },
         "0x1a0e000d" => {
           :name => "coordinator2",
@@ -142,7 +139,6 @@ RSpec.describe VipnetParser do
           :category => :server,
           :server_number => "0002",
           :abonent_number => "0000",
-          :id => "1A0E000D",
         },
         "0x1a0e0000" => {
           :name => "Вся сеть",
@@ -150,7 +146,6 @@ RSpec.describe VipnetParser do
           :category => :group,
           :server_number => "0000",
           :abonent_number => "0000",
-          :id => "1A0E0000",
         },
       }
       expect(nodename).to eq(expected_nodename)

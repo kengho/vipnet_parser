@@ -12,7 +12,7 @@ module VipnetParser
     cyrillic_sub = {
       "а" => "a", "б" => "b", "с" => "c", "д" => "d", "е" => "e", "ф" => "f",
       "А" => "a", "Б" => "b", "С" => "c", "Д" => "d", "Е" => "e", "Ф" => "f",
-     }
+    }
     cyrillic_sub.each do |cyr, lat|
       string = string.gsub(cyr, lat)
     end
@@ -186,7 +186,7 @@ module VipnetParser
         tmp_record[:name].rstrip!
         tmp_record[:enabled] = { "1" => true, "0" => false }[tmp_record[:enabled]]
         tmp_record[:category] = { "A" => :client, "S" => :server, "G" => :group }[tmp_record[:category]]
-        @records[VipnetParser::id(tmp_record[:id])[0]] = tmp_record
+        @records[VipnetParser::id(tmp_record[:id])[0]] = tmp_record.reject { |k, _| k == :id }
       end
       true
     end
