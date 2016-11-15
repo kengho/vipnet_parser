@@ -4,3 +4,8 @@ require "vipnet_parser"
 def file_fixture(filename)
   open(File.join(File.dirname(__FILE__), 'fixtures', "#{filename}")).read
 end
+
+def yaml_fixture(filename)
+  require "yaml"
+  YAML.load_file(File.join(File.dirname(__FILE__), 'fixtures', "#{filename}"))
+end
