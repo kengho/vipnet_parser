@@ -2,75 +2,93 @@ require "vipnet_parser/vipnet_config"
 
 module VipnetParser
   class Iplirconf < VipnetConfig
-    PROPS = [:content, :id, :sections]
-    attr_accessor *PROPS, :last_error
-    private_constant :PROPS
+    attr_accessor :string, :hash
 
-    def initialize(*args)
-      @props = PROPS
-      unless args.size == 1
-        return false
-      end
-      args = args[0]
-      if args.class == String
-        @content = args
-      elsif args.class == Hash
-        @content = args[:content]
-      end
+    def initialize(iplirconf_file)
+      @string = iplirconf_file
+    end
+
+    def parse(format = :hash)
       # remove comments
-      content_nc = @content.gsub(/^#.*\n/, "")
-      # remove ending
-      @sections = Hash.new
-      adapter_position = content_nc.index("[adapter]")
-      unless adapter_position
-        @last_error = "unable to parse iplirconf (no [adapter] section)"
-        return false
-      end
-      # prepare for split
-      content_nc = content_nc[0..(adapter_position - 2)]
-      content_nc = "\n" + content_nc
-      content_nc.split("\n[id]\n").reject{ |t| t.empty? }.each_with_index do |section_content, i|
-        tmp_section = Hash.new
-        props = {
-          :single => [
-            :id, :name, :filterdefault, :tunnel,
-            :firewallip, :port, :proxyid, :dynamic_timeout, :accessip,
-            :usefirewall, :fixfirewall, :virtualip, :version,
-          ],
-          :multi => [:ip, :filterudp, :filtertcp]
+      string = self.string
+        .gsub(/^#.*\n/, "")
+        .gsub(/^;.*\n/, "")
+
+      # "[id]something[server]something".split(/(?=\[.+\])/)
+      # => ["[id]something", "[server]something"]
+      string = string.split(/(?=\[.+\])/)
+
+      # ["[id]something1", "[server]something2"]
+      # => [
+      #   { name: :id, content: "something1" },
+      #   { name: :server, content: "something2" },
+      # ]
+      sections = string.map do |section|
+        section =~ /\[(?<section_name>.+)\]\n(?<section_content>.*)/m
+        {
+          name: Regexp.last_match[:section_name].to_sym,
+          content: Regexp.last_match[:section_content],
         }
-        props.each do |type, props|
-          props.each do |prop|
-            get_section_param({ prop: prop, section: tmp_section, content: section_content, type: type, opts: args })
+      end
+
+      case format
+      when :hash
+        @hash = {}
+        hash_keys = {
+          id: :id,
+          adapter: :name,
+        }
+
+        sections.each do |section|
+          @hash[section[:name]] ||= {}
+          hash_key = hash_keys[section[:name]]
+          if hash_key
+            @hash[section[:name]][:hash_key] ||= hash_key
+            hash, current_key = _section_hash(section[:content], hash_key)
+            @hash[section[:name]][current_key] = hash
+          else
+            hash, _ = _section_hash(section[:content])
+            @hash[section[:name]] = hash
           end
         end
-        # self section id
-        @id = tmp_section[:id] if i == 0
-        @sections[tmp_section[:id]] = tmp_section
+
+        # :servers => { :server => ["0x1a0e000a, coordinator1"] }
+        # => :servers => ["0x1a0e000a, coordinator1"]
+        @hash[:servers] = @hash[:servers][:server] || nil
       end
-      true
+
     end
 
-    def get_section_param(args)
-      opts = {} if args[:opts].class == String
-      opts = args[:opts] if args[:opts].class == Hash
-      value_regexp = Regexp.new("^#{args[:prop].to_s}=\s(.*)$")
-      if args[:type] == :multi
-        tmp_array = Array.new
-        args[:content].each_line do |line|
-          value = line[value_regexp, 1]
-          tmp_array.push(value) if value
+    def _section_hash(section_content, hash_key = nil)
+      hash = {}
+
+      section_content.split("\n").each do |line|
+        if line =~ /(?<prop>.*)=\s(?<value>.*)/
+          prop = Regexp.last_match[:prop].to_sym
+          value = Regexp.last_match[:value]
+
+          # array-type props
+          if [:ip, :filterudp, :filtertcp, :server].include?(prop)
+            if hash[prop]
+              hash[prop].push(value)
+            else
+              hash[prop] = [value]
+            end
+          else
+            hash[prop] = value
+          end
         end
-        unless tmp_array.empty?
-          tmp_array = tmp_array.to_s if opts[:arrays_to_s]
-          args[:section][args[:prop]] = tmp_array
-        end
-      elsif args[:type] == :single
-        value = args[:content][value_regexp, 1]
-        args[:section][args[:prop]] = value if value
+      end
+
+      if hash_key && hash[hash_key]
+        current_key = hash[hash_key]
+        hash.delete(hash_key)
+        return [hash, current_key]
+      else
+        return hash
       end
     end
 
-    private :get_section_param
+    private :_section_hash
   end
 end
