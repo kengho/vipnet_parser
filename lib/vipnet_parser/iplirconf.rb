@@ -57,8 +57,9 @@ module VipnetParser
         # :servers => { :server => ["0x1a0e000a, coordinator1"] }
         # => :servers => ["0x1a0e000a, coordinator1"]
         @hash[:servers] = @hash[:servers][:server] || nil
+        
+        return @hash
       end
-
     end
 
     def _section_hash(section_content, hash_key = nil)

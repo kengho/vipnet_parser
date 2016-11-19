@@ -27,6 +27,8 @@ module VipnetParser
           record.delete(:id)
           @hash[normal_id] = record
         end
+
+        return @hash
       end
     end
 
