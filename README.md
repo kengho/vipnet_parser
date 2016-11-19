@@ -20,43 +20,41 @@ or just run
 ```
 irb(main):001:0> require "vipnet_parser"
 => true
-irb(main):002:0> content = File.open("iplir.conf").read
-=> "#commentary\n[id]\nid= 0x1a0e000d\nname= coordinator...
-...
-irb(main):003:0> iplirconf = VipnetParser::Iplirconf.new(content)
-=> #<VipnetParser::Iplirconf:0x00000001da36c0...
-...
-irb(main):005:0> iplirconf.sections.class
-=> Hash
-irb(main):006:0> iplirconf.sections["0x1a0e000a"]
-=> {:id=>"0x1a0e000a", :name=>"coordinator1", :filterdefault=>"pass",
-:tunnel=>"192.0.2.100-192.0.2.200 to 192.0.2.100-192.0.2.200",
-:firewallip=>"192.0.2.4", :port=>"55777",
-:proxyid=>"0x00000000", :accessip=>"203.0.113.4",
-:usefirewall=>"off", :virtualip=>"198.51.100.4",
-:version=>"3.0-670", :ip=>["192.0.2.51", "192.0.2.3"]}
-...
+irb(main):002:0> iplirconf_file = File.open("iplir.conf").read
+=> "#commentary\n[id]\nid= 0x1a0e000d\nname=...
+irb(main):003:0> iplirconf = VipnetParser::Iplirconf.new(iplirconf_file)
+=> #<VipnetParser::Iplirconf:0x00000001c9ef40 @string="#commentary\n[id]\nid= 0x1a0e000d\nname...
+irb(main):004:0> iplirconf.parse()
+=> {:id=>{:hash_key=>:id, "0x1a0e000d"=>{:name=>...
+irb(main):005:0> iplirconf.hash
+=> {:id=>{:hash_key=>:id, "0x1a0e000d"=>{:name=>...
 ```
+
+Assuming koi8-r encoding of iplir.conf by default. May be overridden like that:
+
+`iplirconf.parse(:hash, "utf8")`
 
 ### nodename.doc
 
 ```
 irb(main):001:0> require "vipnet_parser"
 => true
-irb(main):002:0> content = File.open("nodename.doc").read
-=> "administrator                                      1 A 00001A0E00010001 1A0E000B\r\n
-...
-irb(main):003:0> nodename = VipnetParser::Nodename.new(content)
+irb(main):002:0> nodename_file = File.open("nodename.doc").read
+=> "administrator                                      1 A 00001A0E00010001 1A0E000B\r\n...
+irb(main):003:0> nodename = VipnetParser::Nodename.new(nodename_file)
 => #<VipnetParser::Nodename:0x00000001ed7988...
-...
-irb(main):004:0> nodename.records.class
-=> Hash
-irb(main):005:0> nodename.records["0x1a0e000a"]
-=> {:name=>"coordinator1", :enabled=>true, :category=>:server,
-:server_number=>"0001", :abonent_number=>"0000", :id=>"1A0E000A"}
+irb(main):004:0> nodename.parse()
+=> {"0x1a0e000b"=>{:name=>...
+irb(main):004:0> nodename.hash
+=> {"0x1a0e000b"=>{:name=>...
 ```
 
+Assuming cp866 encoding of nodename.doc by default. May be overridden like that:
+
+`nodename.parse(:hash, "utf8")`
+
 ### scan string for ViPNet IDs
+
 ```
 irb(main):001:0> require "vipnet_parser"
 => true
@@ -72,7 +70,6 @@ irb(main):004:0> VipnetParser::id("something 0x1a0eabcd-0x1a0eabcf\nsomething el
 ## TODO
 
 * parse `firewall.conf` (for ViPNet Coordinator v3)
-* parse `iplir.conf` completely (it's only `[id]` sections for now)
 * parse `fireaddr.doc`
 * parse `channels.doc` along with `nodename.doc` and make nice graph of ViPNet network channels
 * more vipneting!
