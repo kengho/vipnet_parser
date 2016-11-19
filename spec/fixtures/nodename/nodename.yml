@@ -27,7 +27,7 @@
   :abonent_number: "0000"
 
 "0x1a0e0000":
-  :name: "��� ����"
+  :name: "Вся сеть"
   :enabled: true
   :category: :group
   :server_number: "0000"
