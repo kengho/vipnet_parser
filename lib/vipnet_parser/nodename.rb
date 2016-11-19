@@ -2,34 +2,35 @@ require "vipnet_parser/vipnet_config"
 
 module VipnetParser
   class Nodename < VipnetConfig
-    PROPS = [:content, :records]
-    attr_accessor *PROPS, :last_error
-    private_constant :PROPS
+    attr_accessor :string, :hash
 
-    def initialize(*args)
-      @props = PROPS
-      unless args.size == 1
-        return false
-      end
-      @content = args[0]
-      lines = content.force_encoding("cp866").encode("utf-8", replace: nil).split("\r\n")
-      if lines.size == 0
-        @last_error = "error parsing nodename"
-        return false
-      end
-      @records = Hash.new
-      lines.each do |line|
-        tmp_record = Hash.new
-        tmp_record = get_record_params(line)
-        tmp_record[:name].rstrip!
-        tmp_record[:enabled] = { "1" => true, "0" => false }[tmp_record[:enabled]]
-        tmp_record[:category] = { "A" => :client, "S" => :server, "G" => :group }[tmp_record[:category]]
-        @records[VipnetParser::id(tmp_record[:id])[0]] = tmp_record.reject { |k, _| k == :id }
-      end
-      true
+    def initialize(nodename_file)
+      @string = nodename_file
     end
 
-    def get_record_params(line)
+    def parse(format = :hash, encoding = "cp866")
+      # change encoding to utf8
+      string = self.string
+        .force_encoding(encoding)
+        .encode("utf-8", replace: nil)
+
+      case format
+      when :hash
+        @hash = {}
+
+        string.split("\r\n").each do |line|
+          record = _record_hash(line)
+          record[:name].rstrip!
+          record[:enabled] = { "1" => true, "0" => false }[record[:enabled]]
+          record[:category] = { "A" => :client, "S" => :server, "G" => :group }[record[:category]]
+          normal_id = VipnetParser::id(record[:id]).first
+          record.delete(:id)
+          @hash[normal_id] = record
+        end
+      end
+    end
+
+    def _record_hash(line)
       record_regexp = /^
         (?<name>.{50})\s
         (?<enabled>[01])\s
@@ -41,10 +42,11 @@ module VipnetParser
       $/x
       match = record_regexp.match(line)
       names = match.names.map { |name| name.to_sym }
+
       # https://gist.github.com/flarnie/6221219
       return Hash[names.zip(match.captures)]
     end
 
-    private :get_record_params
+    private :_record_hash
   end
 end
