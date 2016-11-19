@@ -1,7 +1,6 @@
 require "spec_helper"
 
 describe VipnetParser do
-  require "yaml"
   iplirconf_file = file_fixture("iplirconf/iplir.conf")
   expected_iplirconf_hash = yaml_fixture("iplirconf/iplirconf.yml")
 
