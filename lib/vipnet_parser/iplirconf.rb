@@ -8,9 +8,11 @@ module VipnetParser
       @string = iplirconf_file
     end
 
-    def parse(format = :hash)
-      # remove comments
+    def parse(format = :hash, encoding = "koi8-r")
+      # change encoding to utf8 and remove comments
       string = self.string
+        .force_encoding(encoding)
+        .encode("utf-8")
         .gsub(/^#.*\n/, "")
         .gsub(/^;.*\n/, "")
 

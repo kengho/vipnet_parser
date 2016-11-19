@@ -2,7 +2,7 @@
   :hash_key: :id
 
   "0x1a0e000d":
-    :name: "coordinator2"
+    :name: "координатор2"
     :filterdefault: "pass"
     :ip:
       - "192.0.2.9"
