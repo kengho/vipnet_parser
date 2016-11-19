@@ -65,7 +65,7 @@ irb(main):003:0> VipnetParser::id("0xa0eabcd-0xa0eabcf")
 irb(main):004:0> VipnetParser::id("something 0x1a0eabcd-0x1a0eabcf\nsomething else 0x1a0eabdd")
 => ["0x1a0eabcd", "0x1a0eabce", "0x1a0eabcf", "0x1a0eabdd"]
 ```
-(see more stuff in `spec/vipnet_parser_spec.rb`)
+(see more stuff in `spec/vipnet_parser/`)
 
 ## TODO
 
