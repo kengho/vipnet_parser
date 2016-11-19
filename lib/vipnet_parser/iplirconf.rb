@@ -45,7 +45,6 @@ module VipnetParser
           @hash[section[:name]] ||= {}
           hash_key = hash_keys[section[:name]]
           if hash_key
-            @hash[section[:name]][:hash_key] ||= hash_key
             hash, current_key = _section_hash(section[:content], hash_key)
             @hash[section[:name]][current_key] = hash
           else
@@ -57,7 +56,7 @@ module VipnetParser
         # :servers => { :server => ["0x1a0e000a, coordinator1"] }
         # => :servers => ["0x1a0e000a, coordinator1"]
         @hash[:servers] = @hash[:servers][:server] || nil
-        
+
         return @hash
       end
     end
