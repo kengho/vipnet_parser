@@ -35,7 +35,7 @@ module VipnetParser
 
       case format
       when :hash
-        @hash = {}
+        @hash = { _meta: { version: "1" }}
         hash_keys = {
           id: :id,
           adapter: :name,

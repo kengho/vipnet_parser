@@ -16,7 +16,7 @@ module VipnetParser
 
       case format
       when :hash
-        @hash = {}
+        @hash = { _meta: { version: "1" }, id: {} }
 
         string.split("\r\n").each do |line|
           record = _record_hash(line)
@@ -25,7 +25,7 @@ module VipnetParser
           record[:category] = { "A" => :client, "S" => :server, "G" => :group }[record[:category]]
           normal_id = VipnetParser::id(record[:id]).first
           record.delete(:id)
-          @hash[normal_id] = record
+          @hash[:id][normal_id] = record
         end
 
         return @hash
