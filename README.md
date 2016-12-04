@@ -2,7 +2,7 @@
 
 ## Summary
 
-VipnetParser may be helpful if you work with ViPNet technology and want to scan string for IDs or parse configuration files like `iplir.conf` and `nodename.doc`.
+VipnetParser may be helpful if you work with ViPNet™ technology and want to scan string for IDs or parse configuration files like `iplir.conf` and `nodename.doc`.
 
 ## Installing
 
@@ -53,7 +53,7 @@ Assuming cp866 encoding of nodename.doc by default. May be overridden like that:
 
 `nodename.parse(:hash, "utf8")`
 
-### scan string for ViPNet IDs
+### scan string for ViPNet™ IDs
 
 ```
 irb(main):001:0> require "vipnet_parser"
@@ -69,11 +69,13 @@ irb(main):004:0> VipnetParser::id("something 0x1a0eabcd-0x1a0eabcf\nsomething el
 
 ## TODO
 
-* parse `firewall.conf` (for ViPNet Coordinator v3)
+* parse `firewall.conf` (for ViPNet™ Coordinator v3)
 * parse `fireaddr.doc`
-* parse `channels.doc` along with `nodename.doc` and make nice graph of ViPNet network channels
+* parse `channels.doc` along with `nodename.doc` and make nice graph of ViPNet™ network channels
 * more vipneting!
 
 ## License
 
 VipnetParser is distributed under the MIT-LICENSE.
+
+ViPNet™ is registered trademark of InfoTeCS Gmbh, Russia.
