@@ -1,0 +1,5 @@
+administrator                                      1 A 00001A0E00010001 1A0E000B
+client1                                       6670 0 A 00001A0E00020001 1A0E000C
+coordinator1                                       1 S 00001A0E00010000 1A0E000A
+coordinator2                                       1 S 00001A0E00020000 1A0E000D
+Вся сеть                                           1 G C0001A0E00000000 1A0E0000

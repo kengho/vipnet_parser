@@ -35,6 +35,7 @@ module VipnetParser
         end
       end
     end
+
     if string_matches_anything
       return array.uniq.sort
     else
@@ -56,6 +57,7 @@ module VipnetParser
     (interval_end - interval_begin + 1).times do |n|
       array.push("0x#{(interval_begin + n).to_s(16).rjust(8, '0')}")
     end
+
     array
   end
 
@@ -75,8 +77,21 @@ module VipnetParser
       normal_id = normal_ids[0]
       return id[2..5].to_i(16).to_s(10)
     end
+
     false
   end
 
-  module_function :id, :network
+  MAX_NAME_SIZE = 50
+
+  def name(name, vid)
+    return name unless name.size == MAX_NAME_SIZE
+    network = network(vid)
+    search_range = (MAX_NAME_SIZE - network.size..-1)
+    inverted_search_range = (0..MAX_NAME_SIZE - network.size - 1)
+    return name[inverted_search_range].strip if name[search_range] == network
+
+    name
+  end
+
+  module_function :id, :network, :name
 end

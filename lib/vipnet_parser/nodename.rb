@@ -8,7 +8,14 @@ module VipnetParser
       @string = nodename_file
     end
 
-    def parse(format = :hash, encoding = "cp866")
+    DEFAULT_PARSE_ARGS = { format: :hash, encoding: "cp866", normalize_names: false }
+
+    def parse(args = DEFAULT_PARSE_ARGS)
+      args = DEFAULT_PARSE_ARGS.merge(args)
+      format = args[:format]
+      encoding = args[:encoding]
+      normalize_names = args[:normalize_names]
+
       # change encoding to utf8
       string = self.string
         .force_encoding(encoding)
@@ -16,14 +23,15 @@ module VipnetParser
 
       case format
       when :hash
-        @hash = { _meta: { version: "1" }, id: {} }
+        @hash = { _meta: { version: "3" }, id: {} }
 
         string.split("\r\n").each do |line|
           record = _record_hash(line)
           record[:name].rstrip!
           record[:enabled] = { "1" => true, "0" => false }[record[:enabled]]
           record[:category] = { "A" => :client, "S" => :server, "G" => :group }[record[:category]]
-          normal_id = VipnetParser::id(record[:id]).first
+          normal_id = VipnetParser.id(record[:id]).first
+          record[:name] = VipnetParser.name(record[:name], normal_id) if normalize_names
           record.delete(:id)
           @hash[:id][normal_id] = record
         end

@@ -8,7 +8,14 @@ module VipnetParser
       @string = iplirconf_file
     end
 
-    def parse(format = :hash, encoding = "koi8-r")
+    DEFAULT_PARSE_ARGS = { format: :hash, encoding: "koi8-r", normalize_names: false }
+
+    def parse(args = DEFAULT_PARSE_ARGS)
+      args = DEFAULT_PARSE_ARGS.merge(args)
+      format = args[:format]
+      encoding = args[:encoding]
+      normalize_names = args[:normalize_names]
+
       # change encoding to utf8 and remove comments
       string = self.string
         .force_encoding(encoding)
@@ -35,7 +42,7 @@ module VipnetParser
 
       case format
       when :hash
-        @hash = { _meta: { version: "1" }}
+        @hash = { _meta: { version: "3" }}
         hash_keys = {
           id: :id,
           adapter: :name,
@@ -47,6 +54,13 @@ module VipnetParser
           if hash_key
             hash, current_key = _section_hash(section[:content], hash_key)
             @hash[section[:name]][current_key] = hash
+
+            # normalize names
+            # (only available for [id] sections, which are processed with current_key == id)
+            name = @hash[section[:name]][current_key][:name]
+            if name && normalize_names
+              @hash[section[:name]][current_key][:name] = VipnetParser.name(name, current_key)
+            end
           else
             hash, _ = _section_hash(section[:content])
             @hash[section[:name]] = hash

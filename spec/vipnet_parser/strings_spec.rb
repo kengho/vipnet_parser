@@ -83,5 +83,20 @@ describe VipnetParser do
       extracted_network = VipnetParser::network("0x1a0eabcd")
       expect(extracted_network).to eq("6670")
     end
+
+    it "should reject network_vid from name" do
+      normal_name1 = VipnetParser::name("client1                                       6671", "0x1a0f000d")
+      expect(normal_name1).to eq("client1")
+    end
+
+    it "shouldn't reject anything if length of name is < 50" do
+      normal_name1 = VipnetParser::name("client1                                       667", "0x1a0f000d")
+      expect(normal_name1).to eq("client1                                       667")
+    end
+
+    it "shouldn't reject anything if the ending of name is not correct network_vid" do
+      normal_name1 = VipnetParser::name("client1                                       6670", "0x1a0f000d")
+      expect(normal_name1).to eq("client1                                       6670")
+    end
   end
 end
