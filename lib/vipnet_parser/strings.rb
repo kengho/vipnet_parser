@@ -2,11 +2,9 @@ module VipnetParser
   def id(args)
     if args.class == String
       string = args
-      array = Array.new
+      array = []
     elsif args.class == Hash
-      string = args[:string]
-      array = args[:array]
-      threshold = args[:threshold]
+      string, array, threshold = args.values_at(:string, :array, :threshold)
     end
     string = string.downcase
     cyrillic_sub = {
@@ -27,10 +25,10 @@ module VipnetParser
     regexps.each do |regexp, callback|
       if string =~ regexp && !string_matches_anything
         string_matches_anything = true
-        array += callback.call({ string: Regexp.last_match(2), threshold: threshold })
+        array += callback.call(string: Regexp.last_match(2), threshold: threshold)
         [Regexp.last_match(1), Regexp.last_match(3)].each do |side_match|
           unless side_match.empty?
-            array += id({ string: side_match, array: array, threshold: threshold })
+            array += id(string: side_match, array: array, threshold: threshold)
           end
         end
       end
@@ -53,7 +51,7 @@ module VipnetParser
     if threshold
       return [] if interval_end - interval_begin + 1 > threshold
     end
-    array = Array.new
+    array = []
     (interval_end - interval_begin + 1).times do |n|
       array.push("0x#{(interval_begin + n).to_s(16).rjust(8, '0')}")
     end
@@ -74,7 +72,7 @@ module VipnetParser
   def network(id)
     normal_ids = id(id)
     if normal_ids
-      normal_id = normal_ids[0]
+      normal_id = normal_ids.first
       return id[2..5].to_i(16).to_s(10)
     end
 

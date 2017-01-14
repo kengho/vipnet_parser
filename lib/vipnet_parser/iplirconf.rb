@@ -12,9 +12,7 @@ module VipnetParser
 
     def parse(args = DEFAULT_PARSE_ARGS)
       args = DEFAULT_PARSE_ARGS.merge(args)
-      format = args[:format]
-      encoding = args[:encoding]
-      normalize_names = args[:normalize_names]
+      format, encoding, normalize_names = args.values_at(:format, :encoding, :normalize_names)
 
       # change encoding to utf8 and remove comments
       string = self.string
@@ -35,8 +33,8 @@ module VipnetParser
       sections = string.map do |section|
         section =~ /\[(?<section_name>.+)\]\n(?<section_content>.*)/m
         {
-          name: Regexp.last_match[:section_name].to_sym,
-          content: Regexp.last_match[:section_content],
+          name: Regexp.last_match(:section_name).to_sym,
+          content: Regexp.last_match(:section_content),
         }
       end
 
@@ -80,11 +78,11 @@ module VipnetParser
 
       section_content.split("\n").each do |line|
         if line =~ /(?<prop>.*)=\s(?<value>.*)/
-          prop = Regexp.last_match[:prop].to_sym
-          value = Regexp.last_match[:value]
+          prop = Regexp.last_match(:prop).to_sym
+          value = Regexp.last_match(:value)
 
           # array-type props
-          if [:ip, :filterudp, :filtertcp, :server].include?(prop)
+          if %i[ip filterudp filtertcp server].include?(prop)
             if hash[prop]
               hash[prop].push(value)
             else

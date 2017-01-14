@@ -12,9 +12,7 @@ module VipnetParser
 
     def parse(args = DEFAULT_PARSE_ARGS)
       args = DEFAULT_PARSE_ARGS.merge(args)
-      format = args[:format]
-      encoding = args[:encoding]
-      normalize_names = args[:normalize_names]
+      format, encoding, normalize_names = args.values_at(:format, :encoding, :normalize_names)
 
       # change encoding to utf8
       string = self.string

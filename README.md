@@ -32,7 +32,7 @@ irb(main):005:0> iplirconf.hash
 
 Assuming koi8-r encoding for iplir.conf by default. May be overridden like that:
 
-`iplirconf.parse({ encoding: "utf8" })`
+`iplirconf.parse(encoding: "utf8")`
 
 ### nodename.doc
 
@@ -51,14 +51,14 @@ irb(main):004:0> nodename.hash
 
 Assuming cp866 encoding of nodename.doc by default. May be overridden like that:
 
-`nodename.parse({ encoding: "utf8" })`
+`nodename.parse(encoding: "utf8")`
 
 ### normalize names in parse()
 
 Both Nodename.parse() and Iplirconf.parse() allows to pass "normalize_names" option like this
 
 ```
-iplirconf.parse({ normalize_names: true })
+iplirconf.parse(normalize_names: true)
 ```
 
 which processes names of nodes with network numbers in them:
