@@ -70,7 +70,7 @@ describe VipnetParser do
     end
 
     it "shouldn't get vipnet ids from strings beyond specified threshold" do
-      extracted_id = VipnetParser::id({ string: "0x0000-0xffff", threshold: "0xffff".to_i(16) })
+      extracted_id = VipnetParser::id(string: "0x0000-0xffff", threshold: "0xffff".to_i(16))
       expect(extracted_id).to eq([])
     end
 
