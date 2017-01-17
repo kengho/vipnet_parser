@@ -8,8 +8,8 @@ module VipnetParser
     end
     string = string.downcase
     cyrillic_sub = {
-      "а" => "a", "б" => "b", "с" => "c", "д" => "d", "е" => "e", "ф" => "f",
-      "А" => "a", "Б" => "b", "С" => "c", "Д" => "d", "Е" => "e", "Ф" => "f",
+      "а" => "a", "б" => "b", "В" => "b", "с" => "c", "д" => "d", "е" => "e", "ф" => "f",
+      "А" => "a", "Б" => "b", "в" => "b", "С" => "c", "Д" => "d", "Е" => "e", "Ф" => "f",
     }
     cyrillic_sub.each do |cyr, lat|
       string = string.gsub(cyr, lat)

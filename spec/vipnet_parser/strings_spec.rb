@@ -75,8 +75,8 @@ describe VipnetParser do
     end
 
     it "should get vipnet ids from strings with cyrillic symbols" do
-      extracted_id = VipnetParser::id("1АБЕСДЕФ")
-      expect(extracted_id).to eq(["0x1abecdef"])
+      extracted_id = VipnetParser::id("ВАБЕСДЕФ")
+      expect(extracted_id).to eq(["0xbabecdef"])
     end
 
     it "should get network id from vipent id" do
