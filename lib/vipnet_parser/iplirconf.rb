@@ -40,7 +40,7 @@ module VipnetParser
 
       case format
       when :hash
-        @hash = { _meta: { version: "3" }}
+        @hash = {}
         hash_keys = {
           id: :id,
           adapter: :name,
@@ -69,7 +69,18 @@ module VipnetParser
         # => :servers => ["0x1a0e000a, coordinator1"]
         @hash[:servers] = @hash[:servers][:server] || nil
 
-        return @hash
+        # Add config version. If misc => config_version isn't present, put "3",
+        # otherwise, get major version:
+        # "4.2.3-3" => "4".
+        config_version = @hash[:misc][:config_version]
+        parsed_config_version = if config_version
+                                  config_version[0]
+                                else
+                                  "3"
+                                end
+        @hash[:_meta] = { version: parsed_config_version }
+
+        @hash
       end
     end
 
@@ -81,8 +92,11 @@ module VipnetParser
           prop = Regexp.last_match(:prop).to_sym
           value = Regexp.last_match(:value)
 
-          # array-type props
-          if %i[ip filterudp filtertcp server].include?(prop)
+          array_type_props = %i(
+            ip filterudp filtertcp server
+            exclude_from_tunnels accessiplist subnet_real subnet_virtual
+          )
+          if array_type_props.include?(prop)
             if hash[prop]
               hash[prop].push(value)
             else
