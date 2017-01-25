@@ -6,7 +6,10 @@ module VipnetParser
     elsif args.class == Hash
       string, array, threshold = args.values_at(:string, :array, :threshold)
     end
+    array ||= []
     string = string.downcase
+
+    # Substitute cyrillic symbols.
     cyrillic_sub = {
       "а" => "a", "б" => "b", "В" => "b", "с" => "c", "д" => "d", "е" => "e", "ф" => "f",
       "А" => "a", "Б" => "b", "в" => "b", "С" => "c", "Д" => "d", "Е" => "e", "Ф" => "f",
@@ -15,30 +18,28 @@ module VipnetParser
       string = string.gsub(cyr, lat)
     end
 
-    array = [] unless array
     regexps = {
       /(.*)(0x[0-9a-f]{1,8}-0x[0-9a-f]{1,8})(.*)/m => method(:id_parse_variant1),
       /(.*)([0-9a-f]{8})(.*)/m => method(:id_parse_variant2),
       /(.*)0x([0-9a-f]{1,8})(.*)/m => method(:id_parse_variant3),
     }
+
     string_matches_anything = false
     regexps.each do |regexp, callback|
-      if string =~ regexp && !string_matches_anything
-        string_matches_anything = true
-        array += callback.call(string: Regexp.last_match(2), threshold: threshold)
-        [Regexp.last_match(1), Regexp.last_match(3)].each do |side_match|
-          unless side_match.empty?
-            array += id(string: side_match, array: array, threshold: threshold)
-          end
+      next if string_matches_anything
+      next unless string =~ regexp
+      string_matches_anything = true
+
+      array += callback.call(string: Regexp.last_match(2), threshold: threshold)
+      [Regexp.last_match(1), Regexp.last_match(3)].each do |side_match|
+        unless side_match.empty?
+          array += id(string: side_match, array: array, threshold: threshold)
         end
       end
     end
+    return [] unless string_matches_anything
 
-    if string_matches_anything
-      return array.uniq.sort
-    else
-      return []
-    end
+    array.uniq.sort
   end
 
   def self.id_parse_variant1(args)

@@ -8,16 +8,25 @@ module VipnetParser
       @string = nodename_file
     end
 
-    DEFAULT_PARSE_ARGS = { format: :hash, encoding: "cp866", normalize_names: false }
+    DEFAULT_PARSE_ARGS = {
+      format: :hash,
+      encoding: "cp866",
+      normalize_names: false,
+    }
 
     def parse(args = DEFAULT_PARSE_ARGS)
       args = DEFAULT_PARSE_ARGS.merge(args)
-      format, encoding, normalize_names = args.values_at(:format, :encoding, :normalize_names)
+      format, encoding, normalize_names = args.values_at(
+        :format, :encoding, :normalize_names,
+      )
 
-      # change encoding to utf8
+      # Change encoding to utf8.
       string = self.string
         .force_encoding(encoding)
         .encode("utf-8", replace: nil)
+
+      enable_aliases = { "1" => true, "0" => false }
+      group_aliases = { "A" => :client, "S" => :server, "G" => :group }
 
       case format
       when :hash
@@ -26,15 +35,17 @@ module VipnetParser
         string.split("\r\n").each do |line|
           record = _record_hash(line)
           record[:name].rstrip!
-          record[:enabled] = { "1" => true, "0" => false }[record[:enabled]]
-          record[:category] = { "A" => :client, "S" => :server, "G" => :group }[record[:category]]
+          record[:enabled] = enable_aliases[record[:enabled]]
+          record[:category] = group_aliases[record[:category]]
           normal_id = VipnetParser.id(record[:id]).first
-          record[:name] = VipnetParser.name(record[:name], normal_id) if normalize_names
+          if normalize_names
+            record[:name] = VipnetParser.name(record[:name], normal_id)
+          end
           record.delete(:id)
           @hash[:id][normal_id] = record
         end
 
-        return @hash
+        @hash
       end
     end
 
@@ -52,7 +63,7 @@ module VipnetParser
       names = match.names.map { |name| name.to_sym }
 
       # https://gist.github.com/flarnie/6221219
-      return Hash[names.zip(match.captures)]
+      Hash[names.zip(match.captures)]
     end
 
     private :_record_hash
