@@ -8,25 +8,33 @@ module VipnetParser
       @string = iplirconf_file
     end
 
-    DEFAULT_PARSE_ARGS = { format: :hash, encoding: "koi8-r", normalize_names: false }
+    DEFAULT_PARSE_ARGS = {
+      format: :hash,
+      encoding: "koi8-r",
+      normalize_names: false,
+    }
 
     def parse(args = DEFAULT_PARSE_ARGS)
       args = DEFAULT_PARSE_ARGS.merge(args)
-      format, encoding, normalize_names = args.values_at(:format, :encoding, :normalize_names)
+      format, encoding, normalize_names = args.values_at(
+        :format, :encoding, :normalize_names,
+      )
 
-      # change encoding to utf8 and remove comments
+      # Change encoding to utf8 and remove comments.
       string = self.string
-        .force_encoding(encoding)
-        .encode("utf-8")
-        .gsub(/^#.*\n/, "")
-        .gsub(/^;.*\n/, "")
+                   .force_encoding(encoding)
+                   .encode("utf-8")
+                   .gsub(/^#.*\n/, "")
+                   .gsub(/^;.*\n/, "")
 
       # "[id]something[server]something".split(/(?=\[.+\])/)
-      # => ["[id]something", "[server]something"]
+      # =>
+      # ["[id]something", "[server]something"]
       string = string.split(/(?=\[.+\])/)
 
       # ["[id]something1", "[server]something2"]
-      # => [
+      # =>
+      # [
       #   { name: :id, content: "something1" },
       #   { name: :server, content: "something2" },
       # ]
@@ -53,23 +61,26 @@ module VipnetParser
             hash, current_key = _section_hash(section[:content], hash_key)
             @hash[section[:name]][current_key] = hash
 
-            # normalize names
-            # (only available for [id] sections, which are processed with current_key == id)
+            # Normalize names.
+            # (Only available for [id] sections, which are processed with current_key == id.)
             name = @hash[section[:name]][current_key][:name]
-            if name && normalize_names
-              @hash[section[:name]][current_key][:name] = VipnetParser.name(name, current_key)
-            end
+            next unless name && normalize_names
+            name = VipnetParser.name(name, current_key)
+            @hash[section[:name]][current_key][:name] = name
           else
             hash, _ = _section_hash(section[:content])
             @hash[section[:name]] = hash
           end
         end
 
+        # Reduce servers.
         # :servers => { :server => ["0x1a0e000a, coordinator1"] }
-        # => :servers => ["0x1a0e000a, coordinator1"]
+        # =>
+        # :servers => ["0x1a0e000a, coordinator1"]
         @hash[:servers] = @hash[:servers][:server] || nil
 
-        # Add config version. If misc => config_version isn't present, put "3",
+        # Add config version.
+        # If misc => config_version isn't present, put "3",
         # otherwise, get major version:
         # "4.2.3-3" => "4".
         config_version = @hash[:misc][:config_version]
@@ -92,11 +103,11 @@ module VipnetParser
           prop = Regexp.last_match(:prop).to_sym
           value = Regexp.last_match(:value)
 
-          array_type_props = %i(
+          array_props = %i(
             ip filterudp filtertcp server
             exclude_from_tunnels accessiplist subnet_real subnet_virtual
           )
-          if array_type_props.include?(prop)
+          if array_props.include?(prop)
             if hash[prop]
               hash[prop].push(value)
             else
@@ -108,13 +119,11 @@ module VipnetParser
         end
       end
 
-      if hash_key && hash[hash_key]
-        current_key = hash[hash_key]
-        hash.delete(hash_key)
-        return [hash, current_key]
-      else
-        return hash
-      end
+      return hash unless hash_key && hash[hash_key]
+      current_key = hash[hash_key]
+      hash.delete(hash_key)
+
+      [hash, current_key]
     end
 
     private :_section_hash
