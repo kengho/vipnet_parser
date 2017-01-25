@@ -24,4 +24,13 @@ describe VipnetParser do
     actual_iplirconf.parse(normalize_names: true)
     expect(actual_iplirconf.hash).to eq(expected_iplirconf_hash)
   end
+
+  it "should get version of iplirconf", ispec03: true do
+    iplirconf_file1 = file_fixture("iplirconf/iplir01.conf")
+    iplirconf_file3 = file_fixture("iplirconf/iplir03.conf")
+    actual_iplirconf1 = VipnetParser::Iplirconf.new(iplirconf_file1)
+    actual_iplirconf3 = VipnetParser::Iplirconf.new(iplirconf_file3)
+    expect(actual_iplirconf1.version).to eq("3")
+    expect(actual_iplirconf3.version).to eq("4")
+  end
 end

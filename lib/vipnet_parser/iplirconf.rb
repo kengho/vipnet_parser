@@ -73,26 +73,30 @@ module VipnetParser
           end
         end
 
-        # Reduce servers.
+        # Reduce [servers] section.
         # :servers => { :server => ["0x1a0e000a, coordinator1"] }
         # =>
         # :servers => ["0x1a0e000a, coordinator1"]
         @hash[:servers] = @hash[:servers][:server] || nil
 
-        # Add config version.
-        # If misc => config_version isn't present, put "3",
-        # otherwise, get major version:
-        # "4.2.3-3" => "4".
-        config_version = @hash[:misc][:config_version]
-        parsed_config_version = if config_version
-                                  config_version[0]
-                                else
-                                  "3"
-                                end
-        @hash[:_meta] = { version: parsed_config_version }
-
         @hash
       end
+    end
+
+    # Returns config version.
+    # If misc => config_version isn't present, put "3",
+    # otherwise, get major version:
+    # "4.2.3-3" => "4".
+    def version
+      self.parse(format: :hash) unless self.hash
+      config_version = self.hash[:misc][:config_version]
+      parsed_config_version = if config_version
+                                config_version[0]
+                              else
+                                "3"
+                              end
+
+      parsed_config_version
     end
 
     def _section_hash(section_content, hash_key = nil)
