@@ -73,7 +73,7 @@ module VipnetParser
         # :servers => { :server => ["0x1a0e000a, coordinator1"] }
         # =>
         # :servers => ["0x1a0e000a, coordinator1"]
-        @hash[:servers] = @hash[:servers][:server] || nil
+        @hash[:servers] = @hash[:servers][:server] || nil unless @hash.empty?
 
         @hash
       end
@@ -81,7 +81,9 @@ module VipnetParser
 
     # Returns config version.
     def version
+      return nil unless self.string
       self.parse(format: :hash) unless self.hash
+      return nil if self.hash.empty?
       config_version = self.hash[:misc][:config_version]
       parsed_config_version = if config_version
                                 config_version
