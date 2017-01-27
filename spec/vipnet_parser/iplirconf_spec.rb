@@ -36,7 +36,6 @@ describe VipnetParser do
 
   it "version should return nil if hash is empty", ispec04: true do
     iplirconf = VipnetParser::Iplirconf.new
-    iplirconf.string = ""
     expect(iplirconf.version).to be_nil
   end
 

@@ -11,6 +11,11 @@ module VipnetParser
     }
 
     def parse(args = DEFAULT_PARSE_ARGS)
+      args = DEFAULT_PARSE_ARGS.merge(args)
+      format, encoding, normalize_names = args.values_at(
+        :format, :encoding, :normalize_names,
+      )
+
       unless self.string
         case format
         when :hash
@@ -18,11 +23,6 @@ module VipnetParser
           return
         end
       end
-
-      args = DEFAULT_PARSE_ARGS.merge(args)
-      format, encoding, normalize_names = args.values_at(
-        :format, :encoding, :normalize_names,
-      )
 
       # Change encoding to utf8 and remove comments.
       string = self.string
