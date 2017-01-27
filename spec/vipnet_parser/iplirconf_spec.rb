@@ -30,7 +30,7 @@ describe VipnetParser do
     iplirconf_file3 = file_fixture("iplirconf/iplir03.conf")
     actual_iplirconf1 = VipnetParser::Iplirconf.new(iplirconf_file1)
     actual_iplirconf3 = VipnetParser::Iplirconf.new(iplirconf_file3)
-    expect(actual_iplirconf1.version).to eq("3")
-    expect(actual_iplirconf3.version).to eq("4")
+    expect(actual_iplirconf1.version).to eq("3.x")
+    expect(actual_iplirconf3.version).to eq("4.2.3-3")
   end
 end

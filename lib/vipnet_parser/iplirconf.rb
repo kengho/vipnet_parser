@@ -84,16 +84,13 @@ module VipnetParser
     end
 
     # Returns config version.
-    # If misc => config_version isn't present, put "3",
-    # otherwise, get major version:
-    # "4.2.3-3" => "4".
     def version
       self.parse(format: :hash) unless self.hash
       config_version = self.hash[:misc][:config_version]
       parsed_config_version = if config_version
-                                config_version[0]
+                                config_version
                               else
-                                "3"
+                                "3.x"
                               end
 
       parsed_config_version
