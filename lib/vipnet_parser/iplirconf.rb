@@ -4,10 +4,6 @@ module VipnetParser
   class Iplirconf < VipnetConfig
     attr_accessor :string, :hash
 
-    def initialize(iplirconf_file)
-      @string = iplirconf_file
-    end
-
     DEFAULT_PARSE_ARGS = {
       format: :hash,
       encoding: "koi8-r",

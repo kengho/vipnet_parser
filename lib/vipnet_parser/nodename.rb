@@ -4,10 +4,6 @@ module VipnetParser
   class Nodename < VipnetConfig
     attr_accessor :string, :hash
 
-    def initialize(nodename_file)
-      @string = nodename_file
-    end
-
     DEFAULT_PARSE_ARGS = {
       format: :hash,
       encoding: "cp866",

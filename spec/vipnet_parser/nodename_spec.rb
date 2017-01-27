@@ -16,4 +16,9 @@ describe VipnetParser do
     actual_nodename.parse(normalize_names: true)
     expect(actual_nodename.hash).to eq(expected_nodename_hash)
   end
+
+  it "should be able to create empty nodename", nspec02: true do
+    nodename = VipnetParser::Nodename.new
+    expect(nodename).to be_truthy
+  end
 end
