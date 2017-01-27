@@ -11,6 +11,14 @@ module VipnetParser
     }
 
     def parse(args = DEFAULT_PARSE_ARGS)
+      unless self.string
+        case format
+        when :hash
+          @hash = {}
+          return
+        end
+      end
+
       args = DEFAULT_PARSE_ARGS.merge(args)
       format, encoding, normalize_names = args.values_at(
         :format, :encoding, :normalize_names,
@@ -81,7 +89,6 @@ module VipnetParser
 
     # Returns config version.
     def version
-      return nil unless self.string
       self.parse(format: :hash) unless self.hash
       return nil if self.hash.empty?
       config_version = self.hash[:misc][:config_version]
