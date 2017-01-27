@@ -36,7 +36,7 @@
     :name: "administrator"
     :filterdefault: "pass"
     :ip:
-      - "192.0.2.55"
+      - "192.0.2.55, 203.0.113.2"
     :accessip: "203.0.113.2"
     :firewallip: "192.0.2.6"
     :accessiplist:
@@ -52,7 +52,7 @@
     :name: "client1"
     :filterdefault: "pass"
     :ip:
-      - "192.0.2.7"
+      - "192.0.2.7, 203.0.113.3"
     :accessip: "203.0.113.3"
     :firewallip: "192.0.2.8"
     :accessiplist:
@@ -68,8 +68,8 @@
     :name: "coordinator1"
     :filterdefault: "pass"
     :ip:
-      - "192.0.2.51"
-      - "192.0.2.3"
+      - "192.0.2.51, 198.51.100.4"
+      - "192.0.2.3, 198.51.100.40"
     :accessip: "203.0.113.4"
     :tunnel: "192.0.2.100-192.0.2.200 to 192.0.2.100-192.0.2.200"
     :exclude_from_tunnels:

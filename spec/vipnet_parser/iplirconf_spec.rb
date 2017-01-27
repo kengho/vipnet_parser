@@ -28,9 +28,22 @@ describe VipnetParser do
   it "should get version of iplirconf", ispec03: true do
     iplirconf_file1 = file_fixture("iplirconf/iplir01.conf")
     iplirconf_file3 = file_fixture("iplirconf/iplir03.conf")
-    actual_iplirconf1 = VipnetParser::Iplirconf.new(iplirconf_file1)
-    actual_iplirconf3 = VipnetParser::Iplirconf.new(iplirconf_file3)
-    expect(actual_iplirconf1.version).to eq("3.x")
-    expect(actual_iplirconf3.version).to eq("4.2.3-3")
+    iplirconf1 = VipnetParser::Iplirconf.new(iplirconf_file1)
+    iplirconf3 = VipnetParser::Iplirconf.new(iplirconf_file3)
+    expect(iplirconf1.version).to eq("3.x")
+    expect(iplirconf3.version).to eq("4.2.3-3")
   end
+
+  it "should downgrade 4.2.x to 3.x", ispec04: true do
+    iplirconf_file3_x = file_fixture("iplirconf/iplir02.conf")
+    iplirconf_file4_2 = file_fixture("iplirconf/iplir03.conf")
+    iplirconf3_x = VipnetParser::Iplirconf.new(iplirconf_file3_x)
+    iplirconf3_x.parse
+    iplirconf4_2 = VipnetParser::Iplirconf.new(iplirconf_file4_2)
+    iplirconf4_2.parse
+    iplirconf4_2.downgrade("3.x")
+    expect(iplirconf4_2.hash).to eq(iplirconf3_x.hash)
+  end
+
+  # TODO downgrade checks tests (after complete downgrade implementation).
 end

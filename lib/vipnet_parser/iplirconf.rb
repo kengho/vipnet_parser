@@ -96,6 +96,87 @@ module VipnetParser
       parsed_config_version
     end
 
+    def downgrade(to)
+      # TODO: downgrade string too (need rebuild() first).
+      return false unless @hash
+      version = self.version
+      version =~ /^(?<minor_version>\d\.\d)\.*/
+      return false unless Regexp.last_match
+      minor_version = Regexp.last_match(:minor_version)
+
+      case to
+      when "3.x"
+        case minor_version
+        when "4.2"
+          new_hash = @hash.clone
+          props_to_delete = {
+            id: { any: %i(exclude_from_tunnels accessiplist) },
+            visibility: %i(tunneldefault subnet_real subnet_virtual),
+            misc: %i(
+              config_version timesync tunnel_local_network
+              ompnumthreads tcptunnel_establish tunnel_virt_assignment
+            ),
+          }
+          props_to_add = {
+            misc: [{ iparponly: "off" }],
+          }
+
+          @hash.each_key do |key|
+            # { a: 1, b: 2 }.map(&:first)
+            # =>
+            # [:a, :b]
+            next unless props_to_delete.map(&:first).include?(key)
+            props = props_to_delete[key]
+
+            # Delete new props.
+            hashes_to_delete = []
+            case props
+
+            # "id" key.
+            when Hash
+              props = props.values.first
+              subkeys = @hash[key].map(&:first)
+              subkeys.each do |subkey|
+                props.each do |prop|
+                  hashes_to_delete.push([new_hash[key][subkey], prop])
+                end
+              end
+            else
+              props.each do |prop|
+                hashes_to_delete.push([new_hash[key], prop])
+              end
+            end
+            hashes_to_delete.each { |hash| hash.first.delete(hash.last) }
+          end
+
+          # Add default values of deprecated props.
+          props_to_add.each do |key, props|
+            props.each do |prop|
+              new_hash[key].merge!(prop)
+            end
+          end
+
+          # Move to old "ip" style.
+          new_hash[:id].each_key do |id|
+            next unless new_hash[:id][id][:ip]
+            new_hash[:id][id][:ip].each_with_index do |ip, i|
+              ip =~ /^(?<ip>.+),\s(?<accessip>.+)/
+              next unless Regexp.last_match
+              new_hash[:id][id][:ip][i] = Regexp.last_match(:ip)
+            end
+          end
+
+          @hash = new_hash
+
+          true
+        else
+          false
+        end
+      else
+        false
+      end
+    end
+
     def _section_hash(section_content, hash_key = nil)
       hash = {}
 

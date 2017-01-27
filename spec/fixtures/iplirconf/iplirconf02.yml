@@ -103,10 +103,10 @@
   :client_pollinterval: "300"
   :server_pollinterval: "900"
   :iparponly: "off"
-  :ifcheck_timeout: "30"
+  :ifcheck_timeout: "5"
   :ipforwarding: "on"
   :iscaggregate: "on"
-  :msg_compress_level: "9"
+  :msg_compress_level: "3"
   :mssdecrease: "0"
   :ciphertype: "gost"
 
