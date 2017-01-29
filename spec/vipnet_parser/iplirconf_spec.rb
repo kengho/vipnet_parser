@@ -30,13 +30,10 @@ describe VipnetParser do
     iplirconf_file3 = file_fixture("iplirconf/iplir03.conf")
     iplirconf1 = VipnetParser::Iplirconf.new(iplirconf_file1)
     iplirconf3 = VipnetParser::Iplirconf.new(iplirconf_file3)
+    iplirconf1.parse
+    iplirconf3.parse
     expect(iplirconf1.version).to eq("3.x")
     expect(iplirconf3.version).to eq("4.2.3-3")
-  end
-
-  it "version should return nil if hash is empty", ispec04: true do
-    iplirconf = VipnetParser::Iplirconf.new
-    expect(iplirconf.version).to be_nil
   end
 
   # TODO downgrade checks tests (after complete downgrade implementation).

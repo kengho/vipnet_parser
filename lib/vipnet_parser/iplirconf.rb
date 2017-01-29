@@ -2,7 +2,7 @@ require "vipnet_parser/vipnet_config"
 
 module VipnetParser
   class Iplirconf < VipnetConfig
-    attr_accessor :string, :hash
+    attr_accessor :string, :hash, :version
 
     DEFAULT_PARSE_ARGS = {
       format: :hash,
@@ -83,22 +83,10 @@ module VipnetParser
         # :servers => ["0x1a0e000a, coordinator1"]
         @hash[:servers] = @hash[:servers][:server] || nil unless @hash.empty?
 
+        _calculate_version
+
         @hash
       end
-    end
-
-    # Returns config version.
-    def version
-      self.parse(format: :hash) unless self.hash
-      return nil if self.hash.empty?
-      config_version = self.hash[:misc][:config_version]
-      parsed_config_version = if config_version
-                                config_version
-                              else
-                                "3.x"
-                              end
-
-      parsed_config_version
     end
 
     def downgrade(to)
@@ -213,6 +201,17 @@ module VipnetParser
       [hash, current_key]
     end
 
-    private :_section_hash
+    def _calculate_version
+      config_version = self.hash[:misc][:config_version]
+      parsed_config_version = if config_version
+                                config_version
+                              else
+                                "3.x"
+                              end
+
+      @version = parsed_config_version
+    end
+
+    private :_section_hash, :_calculate_version
   end
 end
