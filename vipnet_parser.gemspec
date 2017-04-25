@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = "vipnet_parser"
-  s.version     = "2.4.5"
-  s.date        = "2017-01-29"
+  s.version     = "2.4.6"
+  s.date        = "2017-04-25"
   s.summary     = "ViPNet™ strings parser"
   s.description = "Parses ViPNet™ IDs, iplir.conf and other files"
   s.authors     = ["Alexander Morozov"]

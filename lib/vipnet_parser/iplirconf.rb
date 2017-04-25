@@ -34,7 +34,7 @@ module VipnetParser
       # "[id]something[server]something".split(/(?=\[.+\])/)
       # =>
       # ["[id]something", "[server]something"]
-      string = string.split(/(?=\[.+\])/)
+      string = string.split(/^(?=\[.+\])/)
 
       # ["[id]something1", "[server]something2"]
       # =>
