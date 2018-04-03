@@ -84,6 +84,28 @@ irb(main):004:0> VipnetParser.id("something 0x1a0eabcd-0x1a0eabcf\nsomething els
 
 (see more stuff in `spec/vipnet_parser/`)
 
+### struct.rep
+
+```
+irb(main):001:0> require "vipnet_parser"
+=> true
+irb(main):002:0> struct_file = File.open("struct.rep").read
+=> # some file content
+irb(main):003:0> struct = VipnetParser::Struct.new(struct_file)
+=> #<VipnetParser::Struct:...
+irb(main):004:0> struct.parse
+=> # ...
+irb(main):004:0> struct.hash
+=> {nodes: [{:network_address=>"6670.1.30", :name=>"nodename", :id=>"0x0a0eabcd", :usergroups=>[{:name=>"usergroups", :id=>"0x0a0eabca"}], :users=>[{:name=>"user", :id=>"0x0a0eabcb", :sign=>false}]} ...
+```
+
+## Testing
+
+```
+sudo gem install spec
+rake spec
+```
+
 ## TODO
 
 * parse `firewall.conf` (for ViPNet™ Coordinator v3)

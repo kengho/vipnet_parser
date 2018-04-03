@@ -1,0 +1,49 @@
+:nodes:
+  - :id: "0x0a0eabcd"
+    :name: "Nodename 6670 1"
+    :network_address: "6670.1.111"
+    :usergroups:
+      - :id: "0x0a0ebdca"
+        :name: "Usergroup 6670 1"
+    :users:
+      - :id: "0x0a0e1214"
+        :name: "Username 6670 11"
+        :sign: false
+      - :id: "0x0a0e3214"
+        :name: "Username 6670 12"
+        :sign: false
+  - :id: "0x0a0e1234"
+    :name: "Nodename 6670 2"
+    :network_address: "6670.2.222"
+    :usergroups:
+      - :id: "0x0a0e1516"
+        :name: "Usergroup 6670 2"
+    :users:
+      - :id: "0x0a0e5151"
+        :name: "Username 6670 2"
+        :sign: true
+  - :id: "0x0a0e12ab"
+    :name: "Nodename 6670 3"
+    :network_address: "6670.3.333"
+    :usergroups:
+      - :id: "0x0a0e5454"
+        :name: "Usergroup 6670 3"
+    :users:
+      - :id: "0x0a0ea5a5"
+        :name: "Username 6670 3"
+        :sign: false
+  - :id: "0x0a0f00a0"
+    :name: "Nodename 6671 1                               6671"
+    :network_address: "6671.1.4"
+    :usergroups:
+      - :id: "0x0a0fab12"
+        :name: "Usergroup 6671 11"
+      - :id: "0x0a0f12b2"
+        :name: "Usergroup 6671 12"
+    :users:
+      - :id: "0x0a0fb5b5"
+        :name: "Username 6671 11"
+        :sign: false
+      - :id: "0x0a0fb5b5"
+        :name: "Username 6671 11"
+        :sign: false
