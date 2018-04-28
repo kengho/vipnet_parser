@@ -7,7 +7,7 @@ module VipnetParser
       string, array, threshold = args.values_at(:string, :array, :threshold)
     end
     array ||= []
-    string = string.downcase
+    string = string.downcase.encode!('utf-8')
 
     # Substitute cyrillic symbols.
     cyrillic_sub = {
